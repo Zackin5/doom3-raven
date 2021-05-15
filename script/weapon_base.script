@@ -114,19 +114,6 @@ string weapon_base::GetFireAnim() {
 	return "fire";
 }
 
-// Math functions
-float Lerp(float a, float b, float f){
-	return a + f * (b - a);
-}
-
-float Clamp(float n, float min, float max){
-	if(n < min)
-		return n;
-	if (n > max)
-		return max;
-	return n;
-}
-
 /*
 =====================
 weapon_base::GetFireSpread
@@ -134,6 +121,7 @@ weapon_base::GetFireSpread
 Gets fire spread configuration for the weapon
 =====================
 */
-float weapon_base::GetFireSpread(float lowerSpread, float upperSpread) {
-	return Lerp(lowerSpread, upperSpread, Clamp(weaponInaccuracy / 100.0, 0, 100));
+float weapon_base::GetFireSpread(float lowerSpread, float upperSpread, float spreadImpulse) {
+	weaponInaccuracy = Clamp(weaponInaccuracy + spreadImpulse, 0, 100);
+	return Lerp(lowerSpread, upperSpread, weaponInaccuracy / 100.0);
 }

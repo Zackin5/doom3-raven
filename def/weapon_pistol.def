@@ -99,7 +99,9 @@ entityDef weapon_pistol {
 	
 	"skin_invisible"			"skins/pistol_invis"
 	
-	"spread"					"0"
+	"spreadMin"					"0"
+	"spreadMax"					"4"
+	"spreadImpulse"				"2"
 }
 
 entityDef moveable_item_pistol {

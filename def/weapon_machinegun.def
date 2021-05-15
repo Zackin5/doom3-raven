@@ -94,7 +94,8 @@ entityDef weapon_machinegun {
 	"skin_invisible"			"skins/machinegun_invis"
 	
 	"spreadMin"					"1"
-	"spreadMax"					"11"
+	"spreadMax"					"8"
+	"spreadImpulse"				"16"
 }
 
 entityDef moveable_item_machinegun {

@@ -70,10 +70,23 @@ void player::update_Accuracy(vector lastTickAim) {
 	vector thisTickAim = getViewAngles();
 	vector playerAimDelta = lastTickAim - thisTickAim;
 
-	weapon.weaponInaccuracy = sys.vecLength(playerMovement) + sys.vecLength(playerAimDelta);
+	float inaccuracyVal = sys.vecLength(playerMovement) + sys.vecLength(playerAimDelta);
+	if(!AI_ONGROUND)
+	{
+		inaccuracyVal *= sys.strToFloat(sys.getcvar("raven_wpn_recoil_jump"));
+	}
+	if(AI_CROUCH)
+	{
+		inaccuracyVal *= sys.strToFloat(sys.getcvar("raven_wpn_recoil_crouch"));
+	}
+	
+	// Update values
+	weapon.weaponInaccuracy = Clamp(Lerp(weapon.weaponInaccuracy, inaccuracyVal, 0.5), 0, 100);
+
+	sys.drawText(inaccuracyVal, '0 0 0', 5, '1 0 0', 0, 0);
 
 	// Loop
-	sys.wait(0.5);
+	sys.waitFrame();
 	thread update_Accuracy(thisTickAim);
 }
 

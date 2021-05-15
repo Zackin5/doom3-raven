@@ -46,7 +46,7 @@ windowDef Desktop {
 			}
 		}
 
-		windowDef crosshairLight {
+		/*windowDef crosshairLight {
 			rect		0 ,0 ,32 ,32  
 			background	"guis/assets/common/crosshairlight"
 			visible		"gui::combatcursor"
@@ -88,6 +88,6 @@ windowDef Desktop {
 			background	"guis/assets/common/crosshairframe2"
 			visible		"gui::combatcursor"
 			matcolor	0.1, 0.5, 0.5, 0
-		}
+		}*/
 	}
 }
