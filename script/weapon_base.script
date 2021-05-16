@@ -31,7 +31,8 @@ object weapon_base {
 	string		GetFireAnim();
 
 	// RAVEN variables\functions
-	float weaponInaccuracy;	// Weapon inaccuracy multiplier, 0-100
+	float weaponInaccuracy;			// Weapon inaccuracy multiplier, 0-100
+	float weaponInaccuracyImpulse;	// Bonus inaccuracy impulse (eg from recoil)
 };
 
 /*
@@ -121,7 +122,29 @@ weapon_base::GetFireSpread
 Gets fire spread configuration for the weapon
 =====================
 */
-float weapon_base::GetFireSpread(float lowerSpread, float upperSpread, float spreadImpulse) {
-	weaponInaccuracy = Clamp(weaponInaccuracy + spreadImpulse, 0, 100);
-	return Lerp(lowerSpread, upperSpread, weaponInaccuracy / 100.0);
+float weapon_base::GetFireSpread(float lowerSpread, float upperSpread) {
+	return Lerp(lowerSpread, upperSpread, Clamp(weaponInaccuracy, 0, 100) / 100.0);
+}
+
+void weapon_base::ImpulseThread(float impulse, float overTime) {
+	float startTime = sys.getTime();
+	weaponInaccuracyImpulse = weaponInaccuracyImpulse + impulse;
+
+	while (sys.getTime() < startTime + overTime)
+	{
+		weaponInaccuracyImpulse = weaponInaccuracyImpulse - ((impulse / overTime) * sys.getFrameTime());
+
+		sys.waitFrame();
+	}
+}
+
+/*
+=====================
+weapon_base::AddImpulse
+
+Add inaccuracy impulse value to weapon over a time frame
+=====================
+*/
+void weapon_base::AddImpulse(float impulse, float miliseconds) {
+	thread ImpulseThread(impulse, miliseconds / 60.0);
 }

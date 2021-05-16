@@ -64,30 +64,57 @@ player::update_Accuracy
 Calculates player weapon accuracy modifier
 =====================
 */
-void player::update_Accuracy(vector lastTickAim) {
-	// Calculate accuracy TODO: frame timing
-	vector playerMovement = getMove();
-	vector thisTickAim = getViewAngles();
-	vector playerAimDelta = lastTickAim - thisTickAim;
+void player::update_Accuracy() {
+	vector lastTickView = getViewAngles();
+	float lastTickMovementInacc = 0;
+	float lastTickAimInacc = 0;
 
-	float inaccuracyVal = sys.vecLength(playerMovement) + sys.vecLength(playerAimDelta);
-	if(!AI_ONGROUND)
+	while(true)
 	{
-		inaccuracyVal *= sys.strToFloat(sys.getcvar("raven_wpn_recoil_jump"));
-	}
-	if(AI_CROUCH)
-	{
-		inaccuracyVal *= sys.strToFloat(sys.getcvar("raven_wpn_recoil_crouch"));
-	}
-	
-	// Update values
-	weapon.weaponInaccuracy = Clamp(Lerp(weapon.weaponInaccuracy, inaccuracyVal, 0.5), 0, 100);
+		// Clamp impulse
+		if(weapon.weaponInaccuracyImpulse < 0)
+			weapon.weaponInaccuracyImpulse = 0;
 
-	sys.drawText(inaccuracyVal, '0 0 0', 5, '1 0 0', 0, 0);
+		// Calculate inaccuracy
+		float currentMovementInacc = (sys.vecLength(getLinearVelocity()) / 80.0) * 100 / 2.0;	// Player movement
+		
+		vector playerAimDelta = lastTickView - getViewAngles();
+		float currentAimInacc = sys.vecLength(playerAimDelta) * sys.getFrameTime() * 100;	// Player aim
 
-	// Loop
-	sys.waitFrame();
-	thread update_Accuracy(thisTickAim);
+		// Combine inaccuracy
+		float inaccuracyVal = weapon.weaponInaccuracyImpulse;	// Weapon impulse value
+
+		// Slowly degrade movement inacc
+		if(lastTickMovementInacc > currentMovementInacc)
+			currentMovementInacc = Lerp(lastTickMovementInacc, currentMovementInacc, sys.strToFloat(sys.getcvar("raven_wpn_recenter_move")));
+		inaccuracyVal += currentMovementInacc;
+			
+		// Slowly degrade aim inacc
+		if(lastTickAimInacc > currentAimInacc)
+			currentAimInacc += Lerp(lastTickAimInacc, currentAimInacc, sys.strToFloat(sys.getcvar("raven_wpn_recenter_aim")));
+		inaccuracyVal += currentAimInacc;
+
+		// Movement state modifiers
+		if(!AI_ONGROUND)
+		{
+			inaccuracyVal *= sys.strToFloat(sys.getcvar("raven_wpn_recoil_jump"));
+		}
+		else if(AI_CROUCH)
+		{
+			inaccuracyVal *= sys.strToFloat(sys.getcvar("raven_wpn_recoil_crouch"));
+		}
+		
+		// Update values
+		weapon.weaponInaccuracy = Clamp(inaccuracyVal, 0, 100);
+
+		sys.drawText(weapon.weaponInaccuracy, '0 0 0', 5, '1 0 0', 0, 0);
+
+		// Preserve values for next frame
+		lastTickView = getViewAngles();
+		lastTickMovementInacc = currentMovementInacc;
+		lastTickAimInacc = currentAimInacc;
+		sys.waitFrame();
+	}
 }
 
 /*
@@ -101,7 +128,7 @@ void player::init() {
 	animState( ANIMCHANNEL_TORSO, "Torso_Idle", 0 );
 	animState( ANIMCHANNEL_LEGS, "Legs_Idle", 0 );
 	
-	thread update_Accuracy(getViewAngles());
+	thread update_Accuracy();
 }
 
 /*

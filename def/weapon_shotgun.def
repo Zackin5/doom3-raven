@@ -88,8 +88,10 @@ entityDef weapon_shotgun {
 	"snd_respawn"				"sound_weapon_respawn"
 	"skin_invisible"			"skins/shotgun_invis"
 	
-	"spreadMin"					"8"
-	"spreadMax"					"16"
+	"spreadMin"					"6"
+	"spreadMax"					"11"
+	"spreadImpulse"				"25"
+	"spreadImpulseTime"			"140"
 }
 
 entityDef moveable_item_shotgun {

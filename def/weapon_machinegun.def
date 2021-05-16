@@ -96,6 +96,7 @@ entityDef weapon_machinegun {
 	"spreadMin"					"1"
 	"spreadMax"					"8"
 	"spreadImpulse"				"16"
+	"spreadImpulseTime"			"45"
 }
 
 entityDef moveable_item_machinegun {

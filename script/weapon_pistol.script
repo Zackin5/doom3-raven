@@ -21,6 +21,7 @@ object weapon_pistol : weapon_base {
 	float		spreadMin;
 	float		spreadMax;
 	float		spreadImpulse;	// Recoil impulse on fire accuracy
+	float		spreadImpulseTime;
 	
 	void		init();
 	
@@ -37,6 +38,7 @@ void weapon_pistol::init() {
 	spreadMin		= getFloatKey( "spreadMin" );
 	spreadMax		= getFloatKey( "spreadMax" );
 	spreadImpulse	= getFloatKey( "spreadImpulse" );
+	spreadImpulseTime	= getFloatKey( "spreadImpulseTime" );
 	weaponState( "Raise", 0 );
 }
 
@@ -108,7 +110,9 @@ void weapon_pistol::Fire() {
 		startSound( "snd_lowammo", SND_CHANNEL_ITEM, true );
 	}
 	
-	launchProjectiles( PISTOL_NUMPROJECTILES, GetFireSpread(spreadMin, spreadMax, spreadImpulse), 0, 1.0, 1.0 );
+	launchProjectiles( PISTOL_NUMPROJECTILES, GetFireSpread(spreadMin, spreadMax), 0, 1.0, 1.0 );
+	AddImpulse(spreadImpulse, spreadImpulseTime);
+	
 	playAnim( ANIMCHANNEL_ALL, "fire" );
 	waitUntil( animDone( ANIMCHANNEL_ALL, PISTOL_FIRE_TO_IDLE ) );
 	weaponState( "Idle", PISTOL_FIRE_TO_IDLE );

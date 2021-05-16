@@ -101,7 +101,8 @@ entityDef weapon_pistol {
 	
 	"spreadMin"					"0"
 	"spreadMax"					"4"
-	"spreadImpulse"				"2"
+	"spreadImpulse"				"4"
+	"spreadImpulseTime"			"45"
 }
 
 entityDef moveable_item_pistol {
