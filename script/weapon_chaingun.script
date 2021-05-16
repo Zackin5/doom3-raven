@@ -31,7 +31,10 @@ object weapon_chaingun : weapon_base {
 	float		end_rate;
 	float		spin_start;
 	float		spin_end;
-	float		spread;
+	float		spreadMin;
+	float		spreadMax;
+	float		spreadImpulse;	// Recoil impulse on fire accuracy
+	float		spreadImpulseTime;
 	
 	void		init();
 	
@@ -57,7 +60,10 @@ void weapon_chaingun::init() {
 	end_rate		= 0;
 	spin_start		= 0;
 	spin_end		= 0;
-	spread			= getFloatKey( "spread" );
+	spreadMin		= getFloatKey( "spreadMin" );
+	spreadMax		= getFloatKey( "spreadMax" );
+	spreadImpulse	= getFloatKey( "spreadImpulse" );
+	spreadImpulseTime	= getFloatKey( "spreadImpulseTime" );
 
 	weaponState( "Raise", 0 );
 }
@@ -188,7 +194,9 @@ void weapon_chaingun::Fire() {
 	startSound( "snd_spin", SND_CHANNEL_BODY3, false );
 	ammoClip = ammoInClip();
 	while ( !WEAPON_RELOAD && ( WEAPON_NETFIRING || ( WEAPON_ATTACK && ( ammoClip > 0 ) ) ) ) {
-		launchProjectiles( CHAINGUN_NUMPROJECTILES, spread, 0, 1.0, 1.0 );
+		launchProjectiles( CHAINGUN_NUMPROJECTILES, GetFireSpread(spreadMin, spreadMax), 0, 1.0, 1.0 );
+		AddImpulse(spreadImpulse, spreadImpulseTime);
+		
 		startSound( "snd_fire", SND_CHANNEL_WEAPON, false );
 		ammoClip = ammoInClip();
 		if ( ammoClip == CHAINGUN_LOWAMMO ) {
