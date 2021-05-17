@@ -59,12 +59,12 @@ object player : player_base {
 
 /*
 =====================
-player::update_Accuracy
+player::UpdateAccuracy
 
 Calculates player weapon accuracy modifier
 =====================
 */
-void player::update_Accuracy() {
+void player::UpdateAccuracy() {
 	vector lastTickView = getViewAngles();
 	float lastTickMovementInacc = 0;
 	float lastTickAimInacc = 0;
@@ -128,7 +128,7 @@ void player::init() {
 	animState( ANIMCHANNEL_TORSO, "Torso_Idle", 0 );
 	animState( ANIMCHANNEL_LEGS, "Legs_Idle", 0 );
 	
-	thread update_Accuracy();
+	thread UpdateAccuracy();
 }
 
 /*
